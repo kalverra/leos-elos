@@ -16,6 +16,7 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.14"
+        # Do not install dependencies, setup-python handles this and caching already
       - name: Calculate Elos
         env:
           NOTION_INTEGRATION_TOKEN: ${{ secrets.NOTION_INTEGRATION_TOKEN }}

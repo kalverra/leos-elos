@@ -1,9 +1,13 @@
 import os
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from notion_client import Client
 
 def main():
-    load_dotenv()
     notion = Client(auth=os.environ.get("NOTION_INTEGRATION_TOKEN"))
     library_id = os.environ.get("LIBRARY_DB_ID")
     

@@ -1,6 +1,11 @@
 import os
 import sys
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from notion_client import Client
 from core.elo import BookStats, update_ratings
 
@@ -91,7 +96,6 @@ def get_matches(notion: Client, database_id: str):
     return matches
 
 def main():
-    load_dotenv()
     notion_token = os.environ.get("NOTION_INTEGRATION_TOKEN")
     library_db_id = os.environ.get("LIBRARY_DB_ID")
     matches_db_id = os.environ.get("MATCHES_DB_ID")

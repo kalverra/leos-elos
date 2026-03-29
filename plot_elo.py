@@ -1,12 +1,17 @@
 import os
 import plotly.graph_objects as go
-from dotenv import load_dotenv
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from notion_client import Client
 from core.elo import BookStats, update_ratings
 from main import get_library_books, get_matches
 
 def main():
-    load_dotenv()
     notion = Client(auth=os.environ.get("NOTION_INTEGRATION_TOKEN"))
     library_id = os.environ.get("LIBRARY_DB_ID")
     matches_id = os.environ.get("MATCHES_DB_ID")
