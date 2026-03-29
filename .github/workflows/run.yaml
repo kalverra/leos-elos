@@ -19,10 +19,7 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.14"
-      - name: Install system fonts
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq fonts-comic-neue
+          cache: "pip"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
