@@ -1,0 +1,22 @@
+name: Run Elo Calculation
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *" # Midnight UTC
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - name: Execute Elo Sync
+        env:
+          NOTION_INTEGRATION_TOKEN: ${{ secrets.NOTION_INTEGRATION_TOKEN }}
+          LIBRARY_DB_ID: ${{ secrets.LIBRARY_DB_ID }}
+          MATCHES_DB_ID: ${{ secrets.MATCHES_DB_ID }}
+        run: python main.py
