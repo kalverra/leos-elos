@@ -64,9 +64,11 @@ def main():
         ]
     )
     
-    output_path = "elo_history_chart.html"
-    fig.write_html(output_path)
-    print(f"Success! Interactive graph saved to {output_path}")
+    output_path_html = "elo_history_chart.html"
+    output_path_png = "elo_history_chart.png"
+    fig.write_html(output_path_html)
+    fig.write_image(output_path_png, width=1200, height=800)
+    print(f"Success! Interactive graph saved to {output_path_html} and static image to {output_path_png}")
 
 if __name__ == "__main__":
     main()

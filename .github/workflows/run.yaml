@@ -8,15 +8,24 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v6
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.14"
-      - name: Execute Elo Sync
+      - name: Calculate Elos
         env:
           NOTION_INTEGRATION_TOKEN: ${{ secrets.NOTION_INTEGRATION_TOKEN }}
           LIBRARY_DB_ID: ${{ secrets.LIBRARY_DB_ID }}
           MATCHES_DB_ID: ${{ secrets.MATCHES_DB_ID }}
-        run: python main.py
+        run: |
+          python main.py
+          python plot_elo.py
+      - name: Commit Chart
+        uses: EndBug/add-and-commit@v10.0.0
+        with:
+          message: "Update Elo Chart Image"
+          add: "elo_history_chart.png"
