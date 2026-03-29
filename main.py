@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -19,10 +20,18 @@ def get_library_books(notion: Client, database_id: str):
     has_more = True
     start_cursor = None
     while has_more:
-        response = notion.databases.query(
-            database_id=database_id,
-            start_cursor=start_cursor
-        )
+        for attempt in range(3):
+            try:
+                response = notion.databases.query(
+                    database_id=database_id,
+                    start_cursor=start_cursor
+                )
+                break
+            except Exception as e:
+                if attempt < 2:
+                    time.sleep(2)
+                else:
+                    raise e
         has_more = response.get("has_more", False)
         start_cursor = response.get("next_cursor", None)
         results.extend(response["results"])
@@ -61,11 +70,19 @@ def get_matches(notion: Client, database_id: str):
     start_cursor = None
     while has_more:
         # Check if 'Datetime' exists and we can sort by it
-        response = notion.databases.query(
-            database_id=database_id,
-            sorts=[{"property": "Date", "direction": "ascending"}],
-            start_cursor=start_cursor
-        )
+        for attempt in range(3):
+            try:
+                response = notion.databases.query(
+                    database_id=database_id,
+                    sorts=[{"property": "Date", "direction": "ascending"}],
+                    start_cursor=start_cursor
+                )
+                break
+            except Exception as e:
+                if attempt < 2:
+                    time.sleep(2)
+                else:
+                    raise e
         has_more = response.get("has_more", False)
         start_cursor = response.get("next_cursor", None)
         results.extend(response["results"])
