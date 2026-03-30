@@ -28,8 +28,10 @@ jobs:
           NOTION_INTEGRATION_TOKEN: ${{ secrets.NOTION_INTEGRATION_TOKEN }}
           LIBRARY_DB_ID: ${{ secrets.LIBRARY_DB_ID }}
           MATCHES_DB_ID: ${{ secrets.MATCHES_DB_ID }}
+          RECOMMENDATIONS_DB_ID: ${{ secrets.RECOMMENDATIONS_DB_ID }}
         run: |
           python main.py
+          python recommend.py
           python plot_elo.py
       - name: Commit Chart
         uses: EndBug/add-and-commit@v10.0.0

@@ -112,6 +112,58 @@ def get_matches(notion: Client, database_id: str):
             })
     return matches
 
+def get_matches_with_dates(notion: Client, database_id: str):
+    """
+    Same as get_matches but also extracts the Date property from each match.
+    Returns list of dicts with 'match_id', 'winner_id', 'loser_id', 'date' (ISO string or None).
+    """
+    results = []
+    has_more = True
+    start_cursor = None
+    while has_more:
+        for attempt in range(3):
+            try:
+                response = notion.databases.query(
+                    database_id=database_id,
+                    sorts=[{"property": "Date", "direction": "ascending"}],
+                    start_cursor=start_cursor
+                )
+                break
+            except Exception as e:
+                if attempt < 2:
+                    time.sleep(2)
+                else:
+                    raise e
+        has_more = response.get("has_more", False)
+        start_cursor = response.get("next_cursor", None)
+        results.extend(response["results"])
+
+    matches = []
+    for page in results:
+        props = page["properties"]
+
+        winners = []
+        losers = []
+        for prop_name, prop_data in props.items():
+            if prop_name.lower() == "winner" and prop_data["type"] == "relation":
+                winners = prop_data.get("relation", [])
+            elif prop_name.lower() == "loser" and prop_data["type"] == "relation":
+                losers = prop_data.get("relation", [])
+
+        match_date = None
+        date_prop = props.get("Date", {})
+        if date_prop.get("type") == "date" and date_prop.get("date"):
+            match_date = date_prop["date"].get("start")
+
+        if winners and losers:
+            matches.append({
+                "match_id": page["id"],
+                "winner_id": winners[0]["id"],
+                "loser_id": losers[0]["id"],
+                "date": match_date,
+            })
+    return matches
+
 def main():
     notion_token = os.environ.get("NOTION_INTEGRATION_TOKEN")
     library_db_id = os.environ.get("LIBRARY_DB_ID")
