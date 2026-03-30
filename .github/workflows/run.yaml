@@ -3,7 +3,7 @@ name: Run Elo Calculation
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *" # Midnight UTC
+    - cron: "0 23,4 * * *" # 6PM and 10PM EST
   push:
     branches:
       - main
